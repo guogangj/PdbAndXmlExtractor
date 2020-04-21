@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PdbAndXmlExtractor": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\publish3\\Njt.Oms"
+    }
+  }
+}
