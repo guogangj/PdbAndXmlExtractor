@@ -12,34 +12,41 @@ namespace PdbAndXmlExtractor {
             _appConfig = appConfig;
         }
 
-        private bool MakeCache(string packageName, string version, out string pdb, out string xml) {
+        private void MakeCache(string packageName, string version, out string pdb, out string xml) {
             //check if cache contains the xml and pdb
             string cachePathOfThisVersion = Path.Combine(_appConfig.CachePath, packageName.ToLower(), version);
             string cacheXml = Path.Combine(cachePathOfThisVersion, packageName + ".xml");
             string cachePdb = Path.Combine(cachePathOfThisVersion, packageName + ".pdb");
-            pdb = cachePdb;
-            xml = cacheXml;
-            if (File.Exists(cachePdb) && File.Exists(cacheXml)) {
-                return true;
-            }
-
-            Directory.CreateDirectory(cachePathOfThisVersion);
-
-            //Try to extract xml and from ~/.nuget
-            string nupkgFile = Path.Combine(_appConfig.NugetPath, "packages", packageName.ToLower(), version, packageName.ToLower() + "." + version + ".nupkg");
-            if (!File.Exists(nupkgFile)) {
-                return false;
-            }
-            ZipArchive zip = ZipFile.OpenRead(nupkgFile);
-            foreach (ZipArchiveEntry entry in zip.Entries) {
-                if (string.Equals(entry.Name, packageName + ".pdb", StringComparison.OrdinalIgnoreCase)) {
-                    entry.ExtractToFile(cachePdb);
+            pdb = null;
+            xml = null;
+            //Try to extract pdb and xml file only once
+            if (!Directory.Exists(cachePathOfThisVersion)) {
+                Directory.CreateDirectory(cachePathOfThisVersion);
+                //Try to extract xml and from ~/.nuget
+                string nupkgFile = Path.Combine(_appConfig.NugetPath, "packages", packageName.ToLower(), version, packageName.ToLower() + "." + version + ".nupkg");
+                if (!File.Exists(nupkgFile)) {
+                    return;
                 }
-                if (string.Equals(entry.Name, packageName + ".xml", StringComparison.OrdinalIgnoreCase)) {
-                    entry.ExtractToFile(cacheXml);
+                ZipArchive zip = ZipFile.OpenRead(nupkgFile);
+                foreach (ZipArchiveEntry entry in zip.Entries) {
+                    if (string.Equals(entry.Name, packageName + ".pdb", StringComparison.OrdinalIgnoreCase)) {
+                        entry.ExtractToFile(cachePdb);
+                        pdb = cachePdb;
+
+                    }
+                    if (string.Equals(entry.Name, packageName + ".xml", StringComparison.OrdinalIgnoreCase)) {
+                        entry.ExtractToFile(cacheXml);
+                        xml = cacheXml;
+
+                    }
                 }
             }
-            return true;
+            if (File.Exists(cachePdb)) {
+                pdb = cachePdb;
+            }
+            if (File.Exists(cacheXml)) {
+                xml = cacheXml;
+            }
         }
 
         private void TryGetPdbAndXml(string dllFile, string packageName, string pdbFile, string xmlFile) {
@@ -55,9 +62,12 @@ namespace PdbAndXmlExtractor {
                 return;
             }
             version = verParts[0] + "." + verParts[1] + "." + verParts[2];
-            if (MakeCache(packageName, version, out string cachePdbFile, out string cacheXmlFile)) {
+            MakeCache(packageName, version, out string cachePdbFile, out string cacheXmlFile);
+            if (cachePdbFile != null) {
                 File.Copy(cachePdbFile, pdbFile);
                 Console.WriteLine(" => " + pdbFile);
+            }
+            if (cacheXmlFile != null) {
                 File.Copy(cacheXmlFile, xmlFile);
                 Console.WriteLine(" => " + xmlFile);
             }

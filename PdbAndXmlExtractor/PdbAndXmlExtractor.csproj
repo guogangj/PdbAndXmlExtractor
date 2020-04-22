@@ -3,6 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>1.0.1</Version>
+    <Description>A small tool to extract xml and pdb files from Nuget Packages.</Description>
+    <PackageProjectUrl>https://github.com/guogangj/PdbAndXmlExtractor</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
