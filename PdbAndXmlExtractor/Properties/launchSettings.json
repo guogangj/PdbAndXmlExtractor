@@ -2,7 +2,7 @@
   "profiles": {
     "PdbAndXmlExtractor": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\publish2\\Njt.Bfs"
+      "commandLineArgs": "\"D:\\work3\\Njt.Foundation\\Njt.FoundationSample\\bin\\Debug\\net6.0\" --force"
     }
   }
 }

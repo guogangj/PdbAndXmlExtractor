@@ -33,6 +33,12 @@ Run it like this:
 ```
 dotnet PdbAndXmlExtractor.dll C:\work\my-project\bin\Debug\netcoreapp3.1
 ```
+
+Usually, if the PDB or XML files are missing, they will be attempted to be obtained from the NuGet packages, otherwise they will be skipped. However, you can also use the `--force` parameter to forcibly obtain the PDB and XML files from the NuGet packages.
+```
+dotnet PdbAndXmlExtractor.dll C:\work\my-project\bin\Debug\net6.0 --force
+```
+
 If you want to run it every time you build the project, you can write this command in the project's ```Post-build event command line``` configuration. For example:
 ```
 "C:\\Program Files\\dotnet\\dotnet.exe" "D:\\MyTools\\Njt.PdbAndXmlExtractor.dll" $(TargetDir)
