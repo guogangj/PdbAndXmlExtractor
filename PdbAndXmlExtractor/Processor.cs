@@ -57,11 +57,11 @@ class Processor {
         }
         MakeCache(packageName, version, out string cachePdbFile, out string cacheXmlFile);
         if (cachePdbFile != null) {
-            File.Copy(cachePdbFile, pdbFile);
+            File.Copy(cachePdbFile, pdbFile, true);
             Console.WriteLine(" => " + pdbFile);
         }
         if (cacheXmlFile != null) {
-            File.Copy(cacheXmlFile, xmlFile);
+            File.Copy(cacheXmlFile, xmlFile, true);
             Console.WriteLine(" => " + xmlFile);
         }
     }
@@ -90,12 +90,6 @@ class Processor {
             }
 
             if (needToExtract) {
-                if (pdbExists) {
-                    File.Delete(pdbFile);
-                }
-                if (xmlExists) {
-                    File.Delete(xmlFile);
-                }
                 TryGetPdbAndXml(dllFile, version, fileNameWithoutExt, pdbFile, xmlFile);
             }
         }
